@@ -1,0 +1,14 @@
+#board { margin: 200px auto 0; }
+.cell {
+  width: 32px;
+  height: 34px;
+  background: transparent url(../images/grass.png) no-repeat 0 0;
+  float: left;
+}
+.cell.forest { background-image: url(../images/forest.png); }
+.cell.water { background-image: url(../images/water.png); }
+.cell.desert { background-image: url(../images/desert.png); }
+.cell.mountain { background-image: url(../images/mountains.png); }
+
+.row { height: 34px; margin: -8px 0 0 0; display: inline-block; }
+.row:nth-child(even) { margin-left: 16px; }

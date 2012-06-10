@@ -1,10 +1,16 @@
 $(function() {
   
   var tiles = [
-    ['g','g','g','f','f','w','w','d','d','m','g','m'],
-    ['g','d','g','w','f','w','m','d','d','m','g','m'],
-    ['f','d','g','f','d','w','w','d','m','m','g','m'],
-    ['w','f','f','g','f','d','w','m','d','m','g','m']
+    ['g','g','m','m','m','m','m','m','g','g','g','g','g','g'],
+    ['g','g','g','m','m','d','d','m','g','g','g','g','g','g'],
+    ['g','g','g','m','d','w','s','g','g','g','g','g','g','g'],
+    ['g','g','g','g','d','w','w','g','g','g','g','g','g','g'],
+    ['g','g','g','f','f','w','g','g','f','f','g','g','g','g'],
+    ['g','g','g','g','f','f','g','g','w','f','f','g','g','g'],
+    ['g','g','g','g','g','g','g','w','w','d','g','g','g','g'],
+    ['g','g','g','g','g','g','g','d','w','d','m','g','g','g'],
+    ['g','g','g','g','g','g','m','d','d','m','m','g','g','g'],
+    ['g','g','g','g','g','g','m','m','m','m','m','m','g','g']
   ];
   
   var $board = $('#board');
@@ -22,7 +28,7 @@ $(function() {
           classes += 'grass';
           break;
         case 'f':
-          classes += 'grass';
+          classes += 'forest';
           break;
         case 'd':
           classes += 'desert';

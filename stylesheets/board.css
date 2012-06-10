@@ -11,4 +11,4 @@
 .cell.mountain { background-image: url(../images/mountains.png); }
 
 .row { height: 34px; margin: -8px 0 0 0; display: inline-block; }
-.row:nth-child(even) { margin-left: 16px; }
+.row:nth-child(odd) { margin-left: 16px; }

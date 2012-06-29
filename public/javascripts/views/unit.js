@@ -2,14 +2,14 @@ var UnitView = Backbone.View.extend({
   
   tagName: 'div',
   className: 'unit',
-  template: _.template('<div class="body"></div><div class="hitpoints"></div>'),
+  template: _.template('<div class="body <%= state %>"></div><div class="hitpoints"></div>'),
   
   events: {
     'click .body'     : 'clicked'
   },
   
   initialize: function() {
-    _.bindAll(this, 'render', 'clicked');
+    _.bindAll(this, 'render');
     this.model.bind('change', this.render, this);
     
     this.$el.addClass(this.model.get('type'));
@@ -26,7 +26,7 @@ var UnitView = Backbone.View.extend({
   },
   
   clicked: function() {
-    this.model.move();
+    this.model.calculate_movement();
   }
   
 });

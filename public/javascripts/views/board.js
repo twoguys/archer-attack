@@ -6,40 +6,44 @@ var BoardView = Backbone.View.extend({
   },
   
   render_tiles: function() {
-    var width = this.model.tiles[0].length * 64 + 32;
+    var width = this.model.tile_state[0].length * 64 + 32;
     $('#board').css('width', width);
 
     var $tiles = $('#tiles');
-    for ( var i=0; i < this.model.tiles.length; i++ ) {
-      var row = this.model.tiles[i];
+    for ( var i=0; i < this.model.tile_state.length; i++ ) {
+      var row = this.model.tile_state[i];
       var row_html = '<div class="row">';
+      var tiles = [];
       for ( var j=0; j < row.length; j++ ) {
         var tile = row[j];
-        var classes = 'terrain ';
+        var type = '';
         switch (tile) {
           case 'c':
-            classes += 'castle';
+            type += 'castle';
             break;
           case 'g':
-            classes += 'grass';
+            type += 'grass';
             break;
           case 'f':
-            classes += 'forest';
+            type += 'forest';
             break;
           case 'd':
-            classes += 'desert';
+            type += 'desert';
             break;
           case 'w':
-            classes += 'water';
+            type += 'water';
             break;
           case 'm':
-            classes += 'mountain';
+            type += 'mountain';
             break;
         }
-        row_html += '<div class="' + classes + '"></div>';
+        row_html += '<div class="terrain ' + type + '"></div>';
+        var model = new Terrain({ type: type, x: j, y: i });
+        tiles.push(model);
       }
       row_html += '</div>';
       $tiles.append(row_html);
+      this.model.tiles.push(tiles);
     }
   },
   
@@ -59,7 +63,7 @@ var BoardView = Backbone.View.extend({
             type = 'archer';
             break;
         }
-        var model = new Unit({ type: type, x: j, y: i });
+        var model = new Unit({ type: type, x: j, y: i, board: this });
         units.push(model);
         var view = new UnitView({ model: model });
         $units.append(view.render().el);

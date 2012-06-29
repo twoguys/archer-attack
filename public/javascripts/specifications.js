@@ -44,6 +44,23 @@ var TerrainSpecs = {
     },
     'generates_income': false,
     'can_be_captured': false
+  },
+  
+  'water': {
+    'attack_effect': {
+      'soft': 0,
+      'hard': 0
+    },
+    'defense_effect': {
+      'soft': 0,
+      'hard': 0
+    },
+    'movement_cost': {
+      'soft': 99,
+      'hard': 99
+    },
+    'generates_income': false,
+    'can_be_captured': false
   }
   
 }

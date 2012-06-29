@@ -2,7 +2,7 @@ var Board = Backbone.Model.extend({
   
   // these will be loaded from the server later
   
-  tiles: [
+  tile_state: [
     ['g','g','g','g','g','g','g','g','g','g','g','g','g','g'],
     ['g','g','g','g','g','g','g','g','g','g','g','g','g','g'],
     ['g','g','g','g','g','w','g','g','g','g','g','g','g','g'],
@@ -14,6 +14,8 @@ var Board = Backbone.Model.extend({
     ['g','g','g','g','g','g','g','g','g','g','g','g','g','g'],
     ['g','g','g','g','g','g','g','g','g','g','g','g','g','g']
   ],
+  
+  tiles: [],
   
   unit_state: [
     [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],

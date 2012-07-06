@@ -33,16 +33,20 @@ var Unit = Backbone.Model.extend({
     
     var classification = UnitSpecs[this.get('type')]['classification'];
     var movables = [];
+    var attackables = [];
     for (var i=0; i<neighboring_terrain.length; i++) {
       var terrain = neighboring_terrain[i];
       var movement_cost = TerrainSpecs[terrain.get('type')]['movement_cost'][classification];
       var attackable = neighboring_units[i].get('type') != 'blank';
-      if (!attackable && this.mobility() >= movement_cost) {
+      if (attackable) {
+        attackables.push(neighboring_units[i]);
+      } else if (this.mobility() >= movement_cost) {
         movables.push(neighboring_units[i]);
       }
     }
     this.get('board').acting_unit = this;
     this.get('board').set_movables(movables);
+    this.get('board').set_attackables(attackables);
   },
   
   act_here: function() {
@@ -65,11 +69,14 @@ var Unit = Backbone.Model.extend({
     } else if (_.include(movables, this)) { // move here
       this.get('board').swap_units(acting_unit, this);
       this.get('board').acting_complete();
+    } else { // attack here
+      this.get('board').fight_units(acting_unit, this);
+      this.get('board').acting_complete();
     }
   },
   
-  move_here: function(from) {
-    
+  attack: function(unit) {
+    console.log(this.coordinates(), ' is attacking ', unit.coordinates());
   },
   
   mobility: function() {

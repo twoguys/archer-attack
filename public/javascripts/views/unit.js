@@ -2,7 +2,8 @@ var UnitView = Backbone.View.extend({
   
   tagName: 'div',
   className: 'unit',
-  template: _.template('<div class="body <%= state %>"></div><div class="hitpoints"></div>'),
+  template: _.template('<div class="body <%= state %>" title="<%= x %>, <%= y %>"></div><% if (hitpoints > 0) { %><div class="hitpoints"><%= hitpoints %></div><% } %>'),
+  class_types: 'blank archer footman',
   
   events: {
     'click .body'     : 'clicked'
@@ -21,12 +22,12 @@ var UnitView = Backbone.View.extend({
   },
   
   render: function() {
-    this.$el.html(this.template(this.model.toJSON()));
+    this.$el.html(this.template(this.model.toJSON())).removeClass(this.class_types).addClass(this.model.get('type'));
     return this;
   },
   
   clicked: function() {
-    this.model.calculate_movement();
+    this.model.act();
   }
   
 });

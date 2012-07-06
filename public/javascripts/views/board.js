@@ -63,7 +63,9 @@ var BoardView = Backbone.View.extend({
             type = 'archer';
             break;
         }
-        var model = new Unit({ type: type, x: j, y: i, board: this });
+        var options = { type: type, x: j, y: i, board: this.model };
+        if (type != 'blank') { options['hitpoints'] = 10; }
+        var model = new Unit(options);
         units.push(model);
         var view = new UnitView({ model: model });
         $units.append(view.render().el);

@@ -5,35 +5,71 @@ var Unit = Backbone.Model.extend({
       x: 0,
       y: 0,
       type: 'blank',
-      hitpoints: 10,
+      hitpoints: 0,
       board: null,
       state: 'idle'
     }
   },
   
   initialize: function() {
-    _.bindAll(this, 'calculate_movement', 'mobility');
+    _.bindAll(this, 'act', 'show_possible_actions', 'mobility');
   },
   
-  calculate_movement: function() {
+  act: function() {
+    var currently_acting = this.get('board').acting_unit;
+
+    if (!currently_acting) {
+      this.show_possible_actions();
+    } else {
+      this.act_here();
+    }
+  },
+  
+  show_possible_actions: function() {
     if (this.get('type') == 'blank') { return false; }
 
     var neighboring_terrain = this.neighboring_terrain();
     var neighboring_units = this.neighboring_units();
-    var classification = UnitSpecs[this.get('type')]['classification'];
     
-    console.log('calculating movement');
+    var classification = UnitSpecs[this.get('type')]['classification'];
+    var movables = [];
     for (var i=0; i<neighboring_terrain.length; i++) {
       var terrain = neighboring_terrain[i];
       var movement_cost = TerrainSpecs[terrain.get('type')]['movement_cost'][classification];
-      if (this.mobility() >= movement_cost) {
-        neighboring_units[i].set('state', 'movable');
+      var attackable = neighboring_units[i].get('type') != 'blank';
+      if (!attackable && this.mobility() >= movement_cost) {
+        movables.push(neighboring_units[i]);
       }
+    }
+    this.get('board').acting_unit = this;
+    this.get('board').set_movables(movables);
+  },
+  
+  act_here: function() {
+    var acting_unit = this.get('board').acting_unit;
+    var movables = this.get('board').movables;
+    var attackables = this.get('board').attackables;
+    
+    var actable_tiles = union_arrays(movables, attackables);
+    var clicked_on_actable_tile = false;
+    if (_.include(actable_tiles, this)) {
+      clicked_on_actable_tile = true;
+    }
+    if (!clicked_on_actable_tile) {
+      this.get('board').acting_complete();
+      return false;
+    }
+    
+    if (this == acting_unit) { // clicked the same unit
+      this.get('board').acting_complete();
+    } else if (_.include(movables, this)) { // move here
+      this.get('board').swap_units(acting_unit, this);
+      this.get('board').acting_complete();
     }
   },
   
-  move: function() {
-    console.log('Can move ' + UnitSpecs[this.get('type')]['mobility']);
+  move_here: function(from) {
+    
   },
   
   mobility: function() {
@@ -41,32 +77,37 @@ var Unit = Backbone.Model.extend({
   },
   
   neighboring_terrain: function() {
-    var tiles = this.get('board').model.tiles;
+    var tiles = this.get('board').tiles;
     return this.neighbors(tiles);
   },
   
   neighboring_units: function() {
-    var units = this.get('board').model.units;
+    var units = this.get('board').units;
     return this.neighbors(units);
   },
   
   neighbors: function(array) {
     var deltas = [];
     if (this.get('y') % 2 == 0) { // even row
-      deltas = [[-1,-1],[0,-1],[1,0],[0,1],[-1,1],[-1,0]];
+      deltas = [[-1,0],[0,-1],[1,-1],[1,0],[1,1],[0,1]];
     } else { // odd row
-      deltas = [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,0]];
+      deltas = [[-1,0],[-1,-1],[0,-1],[1,0],[0,1],[-1,1]];
     }
     
     var neighbors = [];
     for (var i=0; i<deltas.length; i++) {
       var new_x = this.get('x') + deltas[i][0];
       var new_y = this.get('y') + deltas[i][1];
-      if (array[new_x] != undefined && array[new_x][new_y] != undefined) {
-        neighbors.push(array[new_x][new_y]);
+      //console.log(new_x, new_y);
+      if (array[new_y] != undefined && array[new_y][new_x] != undefined) {
+        neighbors.push(array[new_y][new_x]);
       }
     }
     return neighbors;
+  },
+  
+  coordinates: function() {
+    return this.get('x') + ', ' + this.get('y');
   }
   
 });

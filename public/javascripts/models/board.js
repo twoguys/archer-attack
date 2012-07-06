@@ -85,9 +85,12 @@ var Board = Backbone.Model.extend({
   },
   
   fight_units: function(from, to) {
-    var from_attack = UnitSpecs[from.get('type')]['attack_strength'][to.get('classification')];
+    var from_type = UnitSpecs[from.get('type')]['classification'];
+    var to_type = UnitSpecs[to.get('type')]['classification'];
+    
+    var from_attack = UnitSpecs[from.get('type')]['attack_strength'][to_type];
     var from_defense = UnitSpecs[from.get('type')]['defensive_strength'];
-    var to_attack = UnitSpecs[to.get('type')]['attack_strength'][from.get('classification')];
+    var to_attack = UnitSpecs[to.get('type')]['attack_strength'][from_type];
     var to_defense = UnitSpecs[to.get('type')]['defensive_strength'];
 
     var new_to_hp = from.get('hitpoints') - this.calculate_damage(from_attack, to_defense, from.get('hitpoints'));
@@ -106,8 +109,9 @@ var Board = Backbone.Model.extend({
         if (randoms[j] < power) { hits += 1; }
       }
     }
-    hits = hits / 6;
+    hits = Math.floor(hits / 6);
     console.log(hits);
+    return hits;
   }
   
 });

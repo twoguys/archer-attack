@@ -75,8 +75,13 @@ var Unit = Backbone.Model.extend({
     }
   },
   
-  attack: function(unit) {
-    console.log(this.coordinates(), ' is attacking ', unit.coordinates());
+  take_damage: function(damage) {
+    var new_hp = this.get('hitpoints') - damage;
+    if (new_hp <= 0) {
+      this.set({ 'hitpoints': 0, type: 'blank' });
+    } else {
+      this.set('hitpoints', new_hp);
+    }
   },
   
   mobility: function() {

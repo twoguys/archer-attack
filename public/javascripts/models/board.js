@@ -93,24 +93,24 @@ var Board = Backbone.Model.extend({
     var to_attack = UnitSpecs[to.get('type')]['attack_strength'][from_type];
     var to_defense = UnitSpecs[to.get('type')]['defensive_strength'];
 
-    var new_to_hp = from.get('hitpoints') - this.calculate_damage(from_attack, to_defense, from.get('hitpoints'));
-    var new_from_hp = to.get('hitpoints') - this.calculate_damage(to_attack, from_defense, to.get('hitpoints'));
-    
-    from.set('hitpoints', new_from_hp);
-    to.set('hitpoints', new_to_hp);
+    var to_damage = this.calculate_damage(from_attack, to_defense, from.get('hitpoints'));
+    to.take_damage(to_damage);
+    var from_damage = this.calculate_damage(to_attack, from_defense, to.get('hitpoints'));
+    from.take_damage(from_damage);
   },
   
   calculate_damage: function(attack, defense, attack_hp) {
     var power = 0.05 * (attack - defense) + 0.5;
+    if (power < 0) { power = 0; }
+    if (power > 1) { power = 1; }
     var hits = 0;
     for (var i=0; i<attack_hp; i++) {
       var randoms = [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()];
-      for (var j=0; j<randoms.length; j++) {
-        if (randoms[j] < power) { hits += 1; }
+      for (var j=0; j<6; j++) {
+        if (power > randoms[j]) { hits += 1; }
       }
     }
-    hits = Math.floor(hits / 6);
-    console.log(hits);
+    hits = Math.round(hits / 6);
     return hits;
   }
   

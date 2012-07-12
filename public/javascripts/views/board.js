@@ -6,8 +6,6 @@ var BoardView = Backbone.View.extend({
   },
   
   render_tiles: function() {
-    var width = this.model.tile_state[0].length * 64 + 32;
-    $('#board').css('width', width);
 
     var $tiles = $('#tiles');
     for ( var i=0; i < this.model.tile_state.length; i++ ) {

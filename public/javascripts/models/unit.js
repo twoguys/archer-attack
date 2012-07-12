@@ -7,7 +7,8 @@ var Unit = Backbone.Model.extend({
       type: 'blank',
       hitpoints: 0,
       board: null,
-      state: 'idle'
+      state: 'idle',
+      has_moved: false
     }
   },
   
@@ -27,9 +28,11 @@ var Unit = Backbone.Model.extend({
   
   show_possible_actions: function() {
     if (this.get('type') == 'blank') { return false; }
+    if (this.get('has_acted')) { return false; }
 
     var neighboring_terrain = this.neighboring_terrain();
     var neighboring_units = this.neighboring_units();
+    console.log('neighboring units count', neighboring_units.length);
     
     var classification = UnitSpecs[this.get('type')]['classification'];
     var movables = [];
@@ -41,11 +44,15 @@ var Unit = Backbone.Model.extend({
       if (attackable) {
         attackables.push(neighboring_units[i]);
       } else if (this.mobility() >= movement_cost) {
+        console.log(neighboring_units[i].get('view').$el);
         movables.push(neighboring_units[i]);
       }
     }
     this.get('board').acting_unit = this;
     this.get('board').set_movables(movables);
+    // _.each(movables, function(movable) {
+    //   console.log(movable.get('view').model.get('state'), movable.get('view'), movable.get('view').$el);
+    // });
     this.get('board').set_attackables(attackables);
   },
   
@@ -68,9 +75,11 @@ var Unit = Backbone.Model.extend({
       this.get('board').acting_complete();
     } else if (_.include(movables, this)) { // move here
       this.get('board').swap_units(acting_unit, this);
+      this.set('has_acted', true);
       this.get('board').acting_complete();
     } else { // attack here
       this.get('board').fight_units(acting_unit, this);
+      //acting_unit.set('has_acted', true);
       this.get('board').acting_complete();
     }
   },
